@@ -1,0 +1,267 @@
+{
+  "_id": 25911690,
+  "engine": "web_playwright",
+  "terminal": "chrome",
+  "executionType": "automatic_run",
+  "isSuccess": 1,
+  "scenario": 8217,
+  "revision": "8217.1",
+  "status": "completed",
+  "customer": 200,
+  "engineData": {
+    "storeTrace": 0,
+    "waitType": "networkidle2",
+    "enableRequestInterception": 1,
+    "disableWebSecurity": 0,
+    "isHeadFull": 0
+  },
+  "scheduledAt": { "date": "2022_05_25T00:00:00Z" },
+  "isMaintenance": 0,
+  "withIncident": 1,
+  "user": "System",
+  "executedAt": { "date": "2022_05_25T00:00:03Z" },
+  "directory": "scenarios_archives/production/2022/05/25/02/8217.1_25911690",
+  "timeConsumption": 62011,
+  "bandwith": 0,
+  "finishedAt": { "date": "2022_05_25T00:01:05Z" },
+  "output": {
+    "steps": {
+      "1": {
+        "code": 1,
+        "logs": [
+          {
+            "type": "info",
+            "message": "Geolocalisation set to 47.21288, -1.55611"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://preprod-hybris.intersport.fr/v2/_ui/shared/js/analyticsmediator.js?v=20220524%201617"
+          },
+          {
+            "type": "page",
+            "message": "\"https://preprod-hybris.intersport.fr/chaussures_de_football_vissees_homme_kaiser_5_cup-adidas-p-0332001O50/\": 200 ()"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://www.googletagmanager.com/ns.html?id=GTM-KV263K2"
+          },
+          {
+            "type": "assert",
+            "message": "Open \"https://preprod-hybris.intersport.fr/chaussures_de_football_vissees_homme_kaiser_5_cup-adidas-p-0332001O50/\": 200 (OK)"
+          }
+        ]
+      },
+      "2": {
+        "label": "Fermer POP-IN cookies",
+        "code": 2,
+        "category": "category_access",
+        "priority": "non_blocking",
+        "logs": [
+          {
+            "type": "info",
+            "message": "Fermer POP-IN cookies IN category_access (non_blocking)"
+          }
+        ]
+      },
+      "2-1": {
+        "code": "2-1",
+        "logs": [
+          { "type": "info", "message": "Condition #1 check..." },
+          {
+            "type": "info",
+            "message": "Blocked resource https://www.googletagmanager.com/gtm.js?id=GTM-KV263K2&gtm_auth=Y7hv6dqbd8hUPwPYkv8SdA&gtm_preview=env-5&gtm_cookies_win=x"
+          },
+          { "type": "info", "message": "Condition #1 failed." },
+          {
+            "type": "bypass",
+            "message": "All conditions failed, no statement to run."
+          }
+        ]
+      },
+      "3": {
+        "code": 3,
+        "logs": [
+          {
+            "type": "info",
+            "message": "Choix d'une taille (40) IN product_access (non_blocking)"
+          }
+        ]
+      },
+      "3-1": {
+        "label": "",
+        "code": "3-1",
+        "category": "",
+        "priority": "",
+        "logs": [
+          {
+            "type": "assert",
+            "message": "Selected \"40\" in \"#select-sizes_id (#1)\"."
+          }
+        ]
+      },
+      "3-2": {
+        "code": "3-2",
+        "logs": [{ "type": "assert", "message": "Waited for 2000ms" }]
+      },
+      "3-3": {
+        "code": "3-3",
+        "logs": [
+          {
+            "type": "assert",
+            "message": "Wait until element \"#addToCartButton (#1)\" visible"
+          }
+        ],
+        "actionshots": ["minishot-3-3-waitfor-element.png"]
+      },
+      "4": {
+        "code": 4,
+        "logs": [
+          {
+            "type": "info",
+            "message": "Ajout produit au panier depuis fiche produit IN cart_add (non_blocking)"
+          }
+        ]
+      },
+      "4-1": {
+        "code": "4-1",
+        "logs": [
+          { "type": "assert", "message": "Click on #addToCartButton (#1)" }
+        ],
+        "actionshots": ["minishot-4-1-mouse-click.png"]
+      },
+      "4-2": {
+        "code": "4-2",
+        "logs": [
+          {
+            "type": "assert",
+            "message": "Wait until element \"a (/Finaliser ma commande/i)\" visible"
+          }
+        ],
+        "actionshots": ["minishot-4-2-waitfor-element.png"]
+      },
+      "5": {
+        "code": 5,
+        "logs": [
+          {
+            "type": "info",
+            "message": "Accès page du panier IN cart_add (blocking)"
+          }
+        ]
+      },
+      "5-1": {
+        "code": "5-1",
+        "logs": [
+          {
+            "type": "assert",
+            "message": "Landing url https://preprod-hybris.intersport.fr/cart/"
+          }
+        ]
+      },
+      "5-2": {
+        "code": "5-2",
+        "logs": [
+          {
+            "type": "assert",
+            "message": "Click on a (/Finaliser ma commande/i)"
+          },
+          {
+            "type": "info",
+            "message": "Geolocalisation set to 47.21288, -1.55611"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://preprod-hybris.intersport.fr/v2/_ui/shared/js/analyticsmediator.js?v=20220524%201613"
+          },
+          {
+            "type": "page",
+            "message": "\"https://preprod-hybris.intersport.fr/cart/\": 200 ()"
+          }
+        ],
+        "actionshots": ["minishot-5-2-mouse-click.png"]
+      },
+      "6": {
+        "code": 6,
+        "logs": [
+          {
+            "type": "info",
+            "message": "Clique supprimer produit sur page du panier IN undefined (non_blocking)"
+          }
+        ]
+      },
+      "6-1": {
+        "code": "6-1",
+        "logs": [
+          {
+            "type": "info",
+            "message": "Blocked resource https://www.googletagmanager.com/gtm.js?id=GTM-KV263K2&gtm_auth=Y7hv6dqbd8hUPwPYkv8SdA&gtm_preview=env-5&gtm_cookies_win=x"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://www.googletagmanager.com/ns.html?id=GTM-KV263K2&gtm_auth=Y7hv6dqbd8hUPwPYkv8SdA&gtm_preview=env-5&gtm_cookies_win=x"
+          },
+          { "type": "assert", "message": "Click on .close.deleteEntry (#1)" },
+          {
+            "type": "page",
+            "message": "\"https://preprod-hybris.intersport.fr/cart/\": 302 ()"
+          },
+          {
+            "type": "info",
+            "message": "Geolocalisation set to 47.21288, -1.55611"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://preprod-hybris.intersport.fr/v2/_ui/shared/js/analyticsmediator.js?v=20220524%201613"
+          },
+          {
+            "type": "page",
+            "message": "\"https://preprod-hybris.intersport.fr/cart/empty/\": 200 ()"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://www.googletagmanager.com/gtm.js?id=GTM-KV263K2&gtm_auth=Y7hv6dqbd8hUPwPYkv8SdA&gtm_preview=env-5&gtm_cookies_win=x"
+          },
+          {
+            "type": "info",
+            "message": "Blocked resource https://www.googletagmanager.com/ns.html?id=GTM-KV263K2&gtm_auth=Y7hv6dqbd8hUPwPYkv8SdA&gtm_preview=env-5&gtm_cookies_win=x"
+          }
+        ],
+        "actionshots": ["minishot-6-1-mouse-click.png"]
+      },
+      "6-2": {
+        "code": "6-2",
+        "logs": [
+          {
+            "type": "assert",
+            "message": "Wait until element \".close.deleteEntry (#1)\" hidden"
+          }
+        ]
+      }
+    },
+    "files": {
+      "screenshots": ["capturecompare.json.zst", "capturereferences.json"],
+      "data": [
+        "capturereferences.json",
+        "error.txt",
+        "output.txt",
+        "resources.json.zst",
+        "scenario.js"
+      ],
+      "actionshots": [
+        "minishot-3-3-waitfor-element.png",
+        "minishot-4-1-mouse-click.png",
+        "minishot-4-2-waitfor-element.png",
+        "minishot-5-2-mouse-click.png",
+        "minishot-6-1-mouse-click.png"
+      ]
+    },
+    "captures": "",
+    "conclusion": {
+      "isSuccess": 1,
+      "executionTime": 62011,
+      "bandwidth": 0,
+      "failData": "",
+      "lastMessage": "Wait until element \".close.deleteEntry (#1)\" hidden"
+    }
+  },
+  "integrityCheckSuccess": 1
+}
