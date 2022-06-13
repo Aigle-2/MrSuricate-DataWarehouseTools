@@ -88,12 +88,34 @@ console.log("success");
 function filter(obj) {
   Object.keys(obj).forEach(
     function (key, value) {
-      // console.log(key, obj[key])
+      if (key == "$date") {
+        obj.date = obj[key]
+        delete obj.$date
+        // console.log(key)
+      }
+      if (key == "code" && Number.isInteger(obj[key])) {
+        obj.code = obj[key].toString()
+        // console.log(key)
+      }
+      if (!isNaN(parseInt(key[0]))) {
+        // obj._0 = obj[key];
+        obj["_" + key ] = obj[key]
+        delete obj[key];
+        // console.log(key)
+      }
       if (obj[key] === "" || obj[key] === null) {
         delete obj[key];
       } else if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
         // console.log(key, obj[key])
-        filter(obj[key]);
+        if (key == "screenshots" && !Object.keys(obj[key]).some(isNaN)) {
+          // delete obj.screenshots;
+          obj[key] = Object.values(obj[key])
+        } else if (key == "actionshots" && !Object.keys(obj[key]).some(isNaN)) {
+          obj[key] = Object.values(obj[key])
+        } else {
+          filter(obj[key]);
+        }
+        
       } else if (Array.isArray(obj[key])) {
         // console.log(key, obj[key], typeof obj[key])
         if (obj[key].length == 0 ) {
