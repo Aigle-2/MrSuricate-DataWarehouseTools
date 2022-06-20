@@ -3,129 +3,163 @@
 const fs = require("fs");
 const { resolve } = require("path");
 const jsonTojsonl = require("json-to-jsonl");
+const lineReader = require("line-reader");
+const Promise = require("bluebird");
+var fileSize = 90 //in MB
 
-let data = fs.readFileSync("./out-mongo-small.json", {
-  encoding: "utf8",
-  flag: "r",
+fs.open("./generatedFiles/generatedJSON_part0.json", "w", (err, file) => {
+  if (err) {
+    throw err;
+  }
+  // console.log("File is created.");
 });
+fs.writeFileSync("./generatedFiles/generatedJSON_part0.json", "[", {
+  flag: "a+",
+});
+var eachLine = Promise.promisify(lineReader.eachLine);
+var fileNumber = 0;
+(async () => {
+  await eachLine(
+    resolve("./out-mongo.json"),
+    { bufferSize: 100000 },
+    function (line, last) {
+      let jsonLine = line;
+      // console.log(line);
+      jsonLine = JSON.parse(jsonLine)
+      jsonLine.output.stepsFormatted = [];
 
-data = "[" + data + "]";
-let accolade_count = 0
-let index_array = []
-for (let h = 0; h < data.length; h++) {
-  // if (h%1000 == 0) {
+      for (let step in jsonLine.output.steps) {
+        // console.log("step", step)
+        // console.log("stepObject", data[i].output.steps[step]);
+        jsonLine.output.stepsFormatted.push(jsonLine.output.steps[step]);
+      }
+      delete jsonLine.output.steps;
+      jsonLine = filter(jsonLine);
 
-  // }
-  if (data[h] == "{") {
-    accolade_count += 1
-  }
-  if (data[h] == "}") {
-    accolade_count -= 1
-    if (accolade_count == 0) {
-      index_array.push(h)
+
+      jsonLine = JSON.stringify(jsonLine);
+      fs.writeFileSync(
+        "./generatedFiles/generatedJSON_part" + fileNumber + ".json",
+        jsonLine + "\n",
+        {
+          flag: "a+",
+        }
+      );
+      if (last) {
+        fs.writeFileSync(
+          "./generatedFiles/generatedJSON_part" + fileNumber + ".json",
+          "]",
+          {
+            flag: "a+",
+          }
+        );
+        // cb();
+        return false; // stop reading
+      } else {
+        if (
+          (stats =
+            fs.statSync(
+              "./generatedFiles/generatedJSON_part" + fileNumber + ".json"
+            ).size /
+              (1024 * 1024) >
+              fileSize)
+        ) {
+          fileNumber += 1;
+          fs.open(
+            "./generatedFiles/generatedJSON_part" + fileNumber + ".json",
+            "w",
+            (err, file) => {
+              if (err) {
+                throw err;
+              }
+              // console.log("File is created.");
+            }
+          );
+          fs.writeFileSync(
+            "./generatedFiles/generatedJSON_part" + (fileNumber - 1) + ".json",
+            "]",
+            {
+              flag: "a+",
+            }
+          );
+          fs.writeFileSync(
+            "./generatedFiles/generatedJSON_part" + fileNumber + ".json",
+            "[",
+            {
+              flag: "a+",
+            }
+          );
+        } else {
+          fs.writeFileSync(
+            "./generatedFiles/generatedJSON_part" + fileNumber + ".json",
+            ",",
+            {
+              flag: "a+",
+            }
+          );
+        }
+      }
     }
+  );
+  for (let i = 0; i < fileNumber + 1; i++) {
+    jsonTojsonl(resolve("./generatedFiles/generatedJSON_part" + i + ".json"));
   }
-}
-let offset = 0
-for (let h = 0; h < index_array.length - 1; h++) {
-  data = data.slice(0, index_array[h] + 1 + offset) + "," + data.slice(index_array[h] + 1 + offset);
-  offset += 1
-  // console.log("replace at line ", index_array[h])
-}
-// console.log("#############################################################")
-// let str = ""
-// for (let k = 545550; k < 545570; k++) {
-//   str = str + data[k]
-// }
-// console.log(str)
-// console.log("#############################################################")
-data = JSON.parse(data);
-
-for (let i = 0; i < data.length; i++) {
-  data[i].output.stepsFormatted = [];
-  //For each entry
-  // console.log("test");
-  // for (let j = 0; j < data[i].output.steps.length; i++) {
-  //   //For each step
-  //   console.log("data:", data[i].output.steps);
-  // }
-  for (var step in data[i].output.steps) {
-    // console.log("step", step)
-    // console.log("stepObject", data[i].output.steps[step]);
-    data[i].output.stepsFormatted.push(data[i].output.steps[step]);
-  }
-  delete data[i].output.steps;
-}
-
-data.forEach(obj => {
-  obj = filter(obj)
-})
-data = JSON.stringify(data);
-// let loop1 = true
-// let count = 0
-// while (loop1) {
-//   if (data[count] == "[") {
-//     data = data.slice(0, count) + data.slice(count)
-//     loop1 = false
-//   }
-//   count += 1
-// }
-// loop1 = true
-// count = 0
-// while (loop1) {
-//   if (data[data.length - count] == "]") {
-//     data = data.slice(0, count) + data.slice(count)
-//     loop1 = false
-//   }
-//   count += 1
-// }
-let jsonStringExport = data;
-fs.writeFileSync("./generatedJSON.json", jsonStringExport);
-const response1 = jsonTojsonl(resolve("./generatedJSON.json"));
-console.log("success");
-
+  console.log("success");
+})();
 
 function filter(obj) {
-  Object.keys(obj).forEach(
-    function (key, value) {
-      if (key == "$date") {
-        obj.date = obj[key]
-        delete obj.$date
-        // console.log(key)
-      }
-      if (key == "code" && Number.isInteger(obj[key])) {
-        obj.code = obj[key].toString()
-        // console.log(key)
-      }
-      if (!isNaN(parseInt(key[0]))) {
-        // obj._0 = obj[key];
-        obj["_" + key ] = obj[key]
-        delete obj[key];
-        // console.log(key)
-      }
-      if (obj[key] === "" || obj[key] === null) {
-        delete obj[key];
-      } else if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
-        // console.log(key, obj[key])
-        if (key == "screenshots" && !Object.keys(obj[key]).some(isNaN)) {
-          // delete obj.screenshots;
-          obj[key] = Object.values(obj[key])
-        } else if (key == "actionshots" && !Object.keys(obj[key]).some(isNaN)) {
-          obj[key] = Object.values(obj[key])
-        } else {
-          filter(obj[key]);
-        }
-        
-      } else if (Array.isArray(obj[key])) {
-        // console.log(key, obj[key], typeof obj[key])
-        if (obj[key].length == 0 ) {
-          delete obj[key];
-        } else {
-          obj[key].forEach(v => filter(v));
-        }
-      }
-      // console.log("titi = ", key, value)
+  Object.keys(obj).forEach(function (key, value) {
+    if (key == "$date") {
+      obj.date = obj[key];
+      delete obj.$date;
+      // console.log(key)
     }
-  )
-  return obj
+    // if (key == "3-2-2") {
+    //   console.log(key, obj[key], Object.keys(obj[key]) , (Object.prototype.toString.call(obj[key]) === "[object Object]")," generic");
+    // }
+    // if (key == "code" && obj[key] == '3-2-2') {
+    //   console.log("DETECTED");
+    // }
+    // console.log(key, obj[key]);
+    if (key == "code" && Number.isInteger(obj[key])) {
+      obj.code = obj[key].toString();
+      // console.log(key)
+    }
+    if (!isNaN(parseInt(key[0]))) {
+      // obj._0 = obj[key];
+      obj["_" + key] = obj[key];
+      delete obj[key];
+      // console.log(key)
+    }
+
+    if (obj[key] === "" || obj[key] === null) {
+      delete obj[key];
+    } else if (Object.prototype.toString.call(obj[key]) === "[object Object]") {
+      if (key == "screenshots" && !Object.keys(obj[key]).some(isNaN)) {
+        // delete obj.screenshots;
+        obj[key] = Object.values(obj[key]);
+      } else if (key == "actionshots" && !Object.keys(obj[key]).some(isNaN)) {
+        // && !Object.keys(obj[key]).some(isNaN)
+        // console.log("RECURSIVE : ")
+        // console.log(obj[key])
+        obj[key] = Object.values(obj[key]);
+
+        // console.log(key)
+      } else {
+        filter(obj[key]);
+      }
+    } else if (Array.isArray(obj[key])) {
+      // console.log(key, obj[key], typeof obj[key])
+      // if (key == "actionshots") {
+      //   console.log(key, obj[key], " array")
+      // }
+      if (obj[key].length == 0) {
+        delete obj[key];
+      } else {
+        obj[key].forEach((v) => filter(v));
+      }
+    }
+    // console.log("titi = ", key, value)
+  });
+  return obj;
 }
